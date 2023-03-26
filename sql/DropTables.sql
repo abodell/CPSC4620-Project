@@ -1,1 +1,12 @@
 -- Andy Bodellx
+use CPSC4620Project;
+DROP TABLE IF EXISTS pizza;
+DROP TABLE IF EXISTS baseprice;
+DROP TABLE IF EXISTS topping;
+DROP TABLE IF EXISTS customer;
+DROP TABLE IF EXISTS order;
+DROP TABLE IF EXISTS discount;
+DROP TABLE IF EXISTS orderdiscount;
+DROP TABLE IF EXISTS pizzadiscount;
+DROP TABLE IF EXISTS pizzatoppingrelationship;
+DROP SCHEMA IF EXISTS CPSC4620Project;
