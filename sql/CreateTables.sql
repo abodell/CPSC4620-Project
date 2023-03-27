@@ -11,8 +11,7 @@ CREATE TABLE IF NOT EXISTS topping(
     ToppingMediumAmt INT NOT NULL,
     ToppingLargeAmt INT NOT NULL,
     ToppingXLargeAmt INT NOT NULL,
-    ToppingMinInventory INT NOT NULL,
-    ToppingCurInventory INT NOT NULL,
+    ToppingInventory INT NOT NULL,
     PRIMARY KEY (ToppingID)
 );
 
