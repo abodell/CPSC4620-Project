@@ -1,6 +1,32 @@
 -- Andy Bodell
 use CPSC4620Project;
 
+DROP PROCEDURE IF EXISTS `MAKE_PIZZA`;
+DROP PROCEDURE IF EXISTS `MAKE_CUSTOMER`;
+
+DELIMITER $$
+CREATE PROCEDURE `MAKE_PIZZA` (
+    IN CRUST VARCHAR(255),
+    IN SIZE VARCHAR(255),
+    IN ORDERID INT,
+    IN COST FLOAT,
+    IN PRICE FLOAT
+)
+BEGIN
+    INSERT INTO pizza VALUES (0, CRUST, SIZE, COST, PRICE, 1, ORDERID);
+END
+$$
+CREATE PROCEDURE `MAKE_CUSTOMER` (
+    IN FNAME VARCHAR(255),
+    IN LNAME VARCHAR(255),
+    IN PHONE VARCHAR(255)
+)
+BEGIN 
+    INSERT INTO customer VALUES (0, FNAME, LNAME, PHONE);
+END
+$$
+DELIMITER ;
+
 INSERT INTO discount VALUES
 (0, 'Employee', 15, 0),
 (0, 'Lunch Special Medium', 0, 1.00),
@@ -31,7 +57,7 @@ INSERT INTO baseprice VALUES
 ('Thin', 'small', 0.5, 3),
 ('Original', 'small', 0.75, 3),
 ('Pan', 'small', 1, 3.5),
-('Gluten-Free', 'small', 2, 4)
+('Gluten-Free', 'small', 2, 4),
 ('Thin', 'medium', 1, 5),
 ('Original', 'medium', 1.5, 5),
 ('Pan', 'medium', 2.25, 6),
@@ -44,3 +70,163 @@ INSERT INTO baseprice VALUES
 ('Original', 'x-large', 3, 10),
 ('Pan', 'x-large', 4.5, 11.5),
 ('Gluten-Free', 'x-large', 6, 12.5);
+
+-- INSERTING DUMMY DATA THAT WILL BE USED FOR ALL DINE-IN CUSTOMERS
+INSERT INTO customer VALUES (9999, 'DINE-IN', 'CUSTOMER', '111111111');
+
+-- FIRST ORDER
+INSERT INTO `order` VALUES (0, 'DINE-IN', 3.68, 13.50, '2023-03-05 12:03:00', 9999, 14, 1, 'DINEIN CUSTOMER', 0);
+
+CALL MAKE_PIZZA('Thin', 'Large', (SELECT MAX(OrderID) FROM `order`), 3.68, 13.50);
+
+INSERT INTO pizzatoppingrelationship 
+VALUES ((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Regular Cheese'), 1),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Pepperoni'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT(ToppingID) FROM topping WHERE ToppingName LIKE 'Sausage'), 0);
+
+INSERT INTO orderdiscount VALUES ((SELECT MAX(OrderID) from `order`), (SELECT DiscountID from discount WHERE DiscountName = 'Lunch Special Large'));
+
+-- SECOND ORDER
+INSERT INTO `order` VALUES (0, 'DINE-IN', 4.63, 17.35, '2023-03-03 12:05:00', 9999, 4, 1, 'DINE IN CUSTOMER', 0);
+
+CALL MAKE_PIZZA('Pan', 'Medium', (SELECT MAX(OrderID) FROM `order`), 3.23, 10.60);
+
+INSERT INTO pizzatoppingrelationship VALUES
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Feta Cheese'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Black Olives'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Roma Tomato'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Mushrooms'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Banana Peppers'), 0);
+
+INSERT INTO orderdiscount VALUES ((SELECT MAX(OrderID) from `order`), (SELECT DiscountID from discount where DiscountName = 'Lunch Special Medium')),
+((SELECT MAX(OrderID) from `order`), (SELECT DiscountID from discount where DiscountName = 'Specialty Pizza'));
+
+CALL MAKE_PIZZA('Original', 'Small', (SELECT MAX(OrderID) from `order`), 1.40, 6.75);
+
+INSERT INTO pizzatoppingrelationship
+VALUES
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Regular Cheese'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Chicken'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Banana Peppers'), 0);
+
+-- THIRD ORDER
+INSERT INTO customer VALUES (0, 'Ellis', 'Beck', '864-254-5861');
+
+INSERT INTO `order` VALUES (0, 'PICK-UP', 19.8, 64.5, '2023-03-03 21:30:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-254-5861'), NULL, 1, "PICKUP ORDER", 0);
+
+CALL MAKE_PIZZA('Original', 'Large', (SELECT MAX(OrderID) FROM `order`), 3.30, 10.75);
+
+INSERT INTO pizzatoppingrelationship VALUES 
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Regular Cheese'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Pepperoni'), 0);
+
+CALL MAKE_PIZZA('Original', 'Large', (SELECT MAX(OrderID) FROM `order`), 3.30, 10.75);
+
+INSERT INTO pizzatoppingrelationship VALUES 
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Regular Cheese'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Pepperoni'), 0);
+
+CALL MAKE_PIZZA('Original', 'Large', (SELECT MAX(OrderID) FROM `order`), 3.30, 10.75);
+
+INSERT INTO pizzatoppingrelationship VALUES 
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Regular Cheese'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Pepperoni'), 0);
+
+CALL MAKE_PIZZA('Original', 'Large', (SELECT MAX(OrderID) FROM `order`), 3.30, 10.75);
+
+INSERT INTO pizzatoppingrelationship VALUES 
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Regular Cheese'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Pepperoni'), 0);
+
+CALL MAKE_PIZZA('Original', 'Large', (SELECT MAX(OrderID) FROM `order`), 3.30, 10.75);
+
+INSERT INTO pizzatoppingrelationship VALUES 
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Regular Cheese'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Pepperoni'), 0);
+
+CALL MAKE_PIZZA('Original', 'Large', (SELECT MAX(OrderID) FROM `order`), 3.30, 10.75);
+
+INSERT INTO pizzatoppingrelationship VALUES 
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Regular Cheese'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Pepperoni'), 0);
+
+-- FOURTH ORDER
+INSERT INTO `order` VALUES (0, 'DELIVERY', 16.86, 45.5, '2023-03-05 19:11:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-254-5861'), NULL, 0, '115 Party Blvd, Anderson SC 29621', 1);
+
+CALL MAKE_PIZZA('Original', 'x-large', (SELECT MAX(OrderID) FROM `order`), 5.59, 14.50);
+
+INSERT INTO pizzatoppingrelationship VALUES
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Four Cheese Blend'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Pepperoni'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Sausage'), 0);
+
+INSERT INTO orderdiscount VALUES 
+((SELECT MAX(OrderID) from `order`), (SELECT DiscountID from discount WHERE DiscountName = 'Gameday Special'));
+
+CALL MAKE_PIZZA('Original', 'x-large', (SELECT MAX(OrderID) FROM `order`), 5.59, 17);
+
+INSERT INTO pizzatoppingrelationship VALUES 
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Four Cheese Blend'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Ham'), 1),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Pineapple'), 1);
+
+INSERT INTO pizzadiscount VALUES 
+((SELECT MAX(PizzaID) from pizza), (SELECT DiscountID from discount WHERE DiscountName = 'Specialty Pizza'));
+
+CALL MAKE_PIZZA('Original', 'x-large', (SELECT MAX(OrderID) from `order`), 5.68, 14);
+INSERT INTO pizzatoppingrelationship VALUES
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Four Cheese Blend'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Jalapenos'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Bacon'), 0);
+
+-- FIFTH ORDER
+INSERT INTO customer VALUES (0, 'Kurt', 'McKinney', '864-474-9953');
+
+INSERT INTO `order` VALUES (0, 'PICK-UP', 7.85, 16.85, '2023-03-02 17:30:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-474-9953'), NULL, 1, 'PICKUP ORDER', 0);
+
+CALL MAKE_PIZZA('Gluten-Free', 'x-large', (SELECT MAX(OrderID) from `order`), 7.85, 16.85);
+
+INSERT INTO pizzatoppingrelationship VALUES
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Green Pepper'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Roma Tomato'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Goat Cheese'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Onion'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Mushrooms'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Black Olives'), 0);
+
+
+INSERT INTO pizzadiscount VALUES
+((SELECT MAX(PizzaID) from pizza), (SELECT DiscountID from discount WHERE DiscountName = 'Specialty Pizza'));
+
+-- SIXTH ORDER
+INSERT INTO customer VALUES (0, 'Calvin', 'Sanders', '864-232-8944');
+
+INSERT INTO `order` VALUES (0, 'DELIVERY', 3.20, 13.25, '2023-03-02 18:17:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-232-8944'), NULL, 0, '6745 Wessex St Anderson SC 29621', 1);
+
+CALL MAKE_PIZZA('Thin', 'large', (SELECT MAX(OrderID) from `order`), 3.20, 13.25);
+
+INSERT INTO pizzatoppingrelationship VALUES
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Green Pepper'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Chicken'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Four Cheese Blend'), 1),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Onion'), 0),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Mushrooms'), 0);
+
+-- SEVENTH ORDER
+INSERT INTO customer VALUES (0, 'Lance', 'Benton', '864-878-5679');
+
+INSERT INTO `order` VALUES (0, 'DELIVERY', 6.3, 24, '2023-03-06 20:32:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-878-5679'), NULL, 0, '879 Suburban Home, Anderson, SC 29621', 1);
+
+INSERT INTO orderdiscount VALUES
+((SELECT MAX(OrderID) from `order`), (SELECT DiscountID from discount WHERE DiscountName = 'Employee'));
+
+CALL MAKE_PIZZA('Thin', 'large', (SELECT MAX(OrderID) from `order`), 3.75, 12);
+
+INSERT INTO pizzatoppingrelationship VALUES
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Four Cheese Blend'), 1);
+
+CALL MAKE_PIZZA('Thin', 'large', (SELECT MAX(OrderID) from `order`), 2.55, 12);
+
+INSERT INTO pizzatoppingrelationship VALUES
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Pepperoni'), 1),
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Regular Cheese'), 1);
