@@ -229,4 +229,4 @@ CALL MAKE_PIZZA('Thin', 'large', (SELECT MAX(OrderID) from `order`), 2.55, 12);
 
 INSERT INTO pizzatoppingrelationship VALUES
 ((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Pepperoni'), 1),
-((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Regular Cheese'), 1);
+((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Regular Cheese'), 0);
