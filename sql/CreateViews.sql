@@ -18,3 +18,20 @@ GROUP BY PizzaCrust, PizzaSize
 ORDER BY Profit DESC;
 
 SELECT * FROM ProfitByPizza;
+
+DROP VIEW IF EXISTS ProfitByOrderType;
+CREATE VIEW ProfitByOrderType AS
+SELECT OrderType as CustomerType, DATE_FORMAT(OrderTime, '%Y-%m') AS OrderMonth,
+CAST(OrderPrice AS DECIMAL(6,2)) as TotalOrderPrice, CAST(OrderCost AS DECIMAL(6,2)) as TotalOrderCost, CAST(ROUND(OrderPrice - OrderCost, 5) AS DECIMAL(6,2)) as Profit
+FROM `order`
+UNION ALL 
+SELECT
+" ",
+'Grand Total',
+CAST(ROUND(SUM(OrderPrice), 5) AS DECIMAL(6,2)),
+CAST(ROUND(SUM(OrderCost), 5) AS DECIMAL(6,2)),
+CAST(ROUND(SUM(OrderPrice - OrderCost), 5) AS DECIMAL(6,2))
+FROM `order`
+ORDER BY OrderMonth;
+
+SELECT * FROM ProfitByOrderType;
