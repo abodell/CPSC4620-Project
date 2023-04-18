@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS `order`(
     OrderPrice FLOAT NOT NULL,
     OrderTime DATETIME NOT NULL,
     OrderCustomerID INT NOT NULL,
+    OrderIsComplete TINYINT NOT NULL,
     PRIMARY KEY (OrderID),
     FOREIGN KEY (OrderCustomerID) REFERENCES customer(CustomerID)
 );
