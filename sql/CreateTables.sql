@@ -38,12 +38,30 @@ CREATE TABLE IF NOT EXISTS `order`(
     OrderPrice FLOAT NOT NULL,
     OrderTime DATETIME NOT NULL,
     OrderCustomerID INT NOT NULL,
-    OrderTableNum INT,
-    OrderPickedUp TINYINT,
-    OrderAddress VARCHAR(255),
-    OrderDelivered TINYINT,
     PRIMARY KEY (OrderID),
     FOREIGN KEY (OrderCustomerID) REFERENCES customer(CustomerID)
+);
+
+CREATE TABLE IF NOT EXISTS dineinorder(
+    DineInOrderOrderID INT NOT NULL,
+    DineInOrderTableNum INT NOT NULL,
+    PRIMARY KEY (DineInOrderOrderID),
+    FOREIGN KEY (DineInOrderOrderID) REFERENCES `order`(OrderID)
+);
+
+CREATE TABLE IF NOT EXISTS pickuporder(
+    PickUpOrderOrderID INT NOT NULL,
+    PickUpOrderPickedUp TINYINT NOT NULL,
+    PRIMARY KEY (PickUpOrderOrderID),
+    FOREIGN KEY (PickUpOrderOrderID) REFERENCES `order`(OrderID)
+);
+
+CREATE TABLE IF NOT EXISTS deliveryorder(
+    DeliveryOrderOrderID INT NOT NULL,
+    DeliveryOrderAddress VARCHAR(255) NOT NULL,
+    DeliveryOrderDelivered TINYINT NOT NULL,
+    PRIMARY KEY (DeliveryOrderOrderID),
+    FOREIGN KEY (DeliveryOrderOrderID) REFERENCES `order`(OrderID)
 );
 
 CREATE TABLE IF NOT EXISTS baseprice(
