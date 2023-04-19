@@ -72,10 +72,10 @@ INSERT INTO baseprice VALUES
 ('Gluten-Free', 'x-large', 6, 12.5);
 
 -- INSERTING DUMMY DATA THAT WILL BE USED FOR ALL DINE-IN CUSTOMERS
-INSERT INTO customer VALUES (9999, 'DINE-IN', 'CUSTOMER', '111111111');
+INSERT INTO customer VALUES (9999, 'dinein', 'CUSTOMER', '111111111');
 
 -- FIRST ORDER
-INSERT INTO `order` VALUES (0, 'DINE-IN', 3.68, 13.50, '2023-03-05 12:03:00', 9999, 1);
+INSERT INTO `order` VALUES (0, 'dinein', 3.68, 13.50, '2023-03-05 12:03:00', 9999, 1);
 INSERT INTO dineinorder VALUES ((SELECT MAX(OrderID) from `order`), 14);
 
 CALL MAKE_PIZZA('Thin', 'Large', (SELECT MAX(OrderID) FROM `order`), 3.68, 13.50);
@@ -88,7 +88,7 @@ VALUES ((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE
 INSERT INTO orderdiscount VALUES ((SELECT MAX(OrderID) from `order`), (SELECT DiscountID from discount WHERE DiscountName = 'Lunch Special Large'));
 
 -- SECOND ORDER
-INSERT INTO `order` VALUES (0, 'DINE-IN', 4.63, 17.35, '2023-03-03 12:05:00', 9999, 1);
+INSERT INTO `order` VALUES (0, 'dinein', 4.63, 17.35, '2023-03-03 12:05:00', 9999, 1);
 INSERT INTO dineinorder VALUES ((SELECT MAX(OrderID) from `order`), 4);
 
 CALL MAKE_PIZZA('Pan', 'Medium', (SELECT MAX(OrderID) FROM `order`), 3.23, 10.60);
@@ -114,7 +114,7 @@ VALUES
 -- THIRD ORDER
 INSERT INTO customer VALUES (0, 'Ellis', 'Beck', '864-254-5861');
 
-INSERT INTO `order` VALUES (0, 'PICK-UP', 19.8, 64.5, '2023-03-03 21:30:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-254-5861'), 1);
+INSERT INTO `order` VALUES (0, 'pickup', 19.8, 64.5, '2023-03-03 21:30:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-254-5861'), 1);
 INSERT INTO pickuporder VALUES ((SELECT MAX(OrderID) from `order`), 1);
 
 CALL MAKE_PIZZA('Original', 'Large', (SELECT MAX(OrderID) FROM `order`), 3.30, 10.75);
@@ -154,7 +154,7 @@ INSERT INTO pizzatoppingrelationship VALUES
 ((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Pepperoni'), 0);
 
 -- FOURTH ORDER
-INSERT INTO `order` VALUES (0, 'DELIVERY', 16.86, 45.5, '2023-03-05 19:11:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-254-5861'), 1);
+INSERT INTO `order` VALUES (0, 'delivery', 16.86, 45.5, '2023-03-05 19:11:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-254-5861'), 1);
 INSERT INTO deliveryorder VALUES ((SELECT MAX(OrderID) from `order`), '115 Party Blvd, Anderson SC 29621', 1);
 
 CALL MAKE_PIZZA('Original', 'x-large', (SELECT MAX(OrderID) FROM `order`), 5.59, 14.50);
@@ -186,7 +186,7 @@ INSERT INTO pizzatoppingrelationship VALUES
 -- FIFTH ORDER
 INSERT INTO customer VALUES (0, 'Kurt', 'McKinney', '864-474-9953');
 
-INSERT INTO `order` VALUES (0, 'PICK-UP', 7.85, 16.85, '2023-03-02 17:30:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-474-9953'), 1);
+INSERT INTO `order` VALUES (0, 'pickup', 7.85, 16.85, '2023-03-02 17:30:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-474-9953'), 1);
 INSERT INTO pickuporder VALUES ((SELECT MAX(OrderID) from `order`), 1);
 
 CALL MAKE_PIZZA('Gluten-Free', 'x-large', (SELECT MAX(OrderID) from `order`), 7.85, 16.85);
@@ -206,7 +206,7 @@ INSERT INTO pizzadiscount VALUES
 -- SIXTH ORDER
 INSERT INTO customer VALUES (0, 'Calvin', 'Sanders', '864-232-8944');
 
-INSERT INTO `order` VALUES (0, 'DELIVERY', 3.20, 13.25, '2023-03-02 18:17:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-232-8944'), 1);
+INSERT INTO `order` VALUES (0, 'delivery', 3.20, 13.25, '2023-03-02 18:17:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-232-8944'), 1);
 INSERT INTO deliveryorder VALUES ((SELECT MAX(OrderID) from `order`), '6745 Wessex St Anderson SC 29621', 1);
 
 CALL MAKE_PIZZA('Thin', 'large', (SELECT MAX(OrderID) from `order`), 3.20, 13.25);
@@ -221,7 +221,7 @@ INSERT INTO pizzatoppingrelationship VALUES
 -- SEVENTH ORDER
 INSERT INTO customer VALUES (0, 'Lance', 'Benton', '864-878-5679');
 
-INSERT INTO `order` VALUES (0, 'DELIVERY', 6.3, 24, '2023-03-06 20:32:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-878-5679'), 1);
+INSERT INTO `order` VALUES (0, 'delivery', 6.3, 24, '2023-03-06 20:32:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-878-5679'), 1);
 INSERT INTO deliveryorder VALUES ((SELECT MAX(OrderID) from `order`), '879 Suburban Home, Anderson, SC 29621', 1);
 
 INSERT INTO orderdiscount VALUES
