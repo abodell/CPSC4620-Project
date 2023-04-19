@@ -156,7 +156,48 @@ public class Menu {
 	 * When I enter the order, print out all the information about that order, not just the simplified view.
 	 * 
 	 */
-		
+	System.out.println("\nWould you like to:");
+	System.out.println("(a) display all orders");
+	System.out.println("(b) display orders since a specific date");
+
+	BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+	String option = reader.readLine();
+	boolean isAll = option.equals("a");
+
+	ArrayList<Order> orders = DBNinja.getCurrentOrders();
+	if (isAll) {
+		for (Order order : orders) {
+			System.out.println("OrderID: " + order.getOrderID() + "\t|  DatePlaced: " + order.getDate() + "\t|   CustomerName: " + DBNinja.getCustomerName(order.getCustID()) + ", OrderType: " + order.getOrderType() + ", isComplete: " + order.getIsComplete());
+		}
+	} else {
+		System.out.println("\nWhat is the date you want to restrict by? (YYYY-MM-DD)");
+		String date = reader.readLine();
+		for (Order order : orders) {
+			if (Integer.parseInt(order.getDate().substring(8, 10)) > Integer.parseInt(date.substring(8, 10))) {
+				System.out.println("OrderID: " + order.getOrderID() + "\t|  DatePlaced: " + order.getDate() + "\t|   CustomerName: " + DBNinja.getCustomerName(order.getCustID()) + ", OrderType: " + order.getOrderType() + ", isComplete: " + order.getIsComplete());
+			}
+		}
+	}
+
+	System.out.println("Which order would you like to see in detail?  Enter the number:");
+	int orderNum = Integer.parseInt(reader.readLine());
+
+	for (Order order : orders) {
+		if (order instanceof DineinOrder && order.getOrderID() == orderNum) {
+			DineinOrder curOrder = (DineinOrder)order;
+			System.out.println("\nOrderID: " + order.getOrderID() + "\t|  DatePlaced: " + order.getDate() + "\t|   CustomerName: " + DBNinja.getCustomerName(order.getCustID()) + ", OrderType: " + order.getOrderType() + ", isComplete: " + order.getIsComplete() +
+			"\t|  CustPrice: " + order.getCustPrice() + ", BusPrice: " + order.getBusPrice() + "\t|  TableNum: " + curOrder.getTableNum());
+		} else if (order instanceof PickupOrder && order.getOrderID() == orderNum) {
+			PickupOrder curOrder = (PickupOrder)order;
+			boolean pickedUp = curOrder.getIsPickedUp() == 1;
+			System.out.println("\nOrderID: " + order.getOrderID() + "\t|  DatePlaced: " + order.getDate() + "\t|   CustomerName: " + DBNinja.getCustomerName(order.getCustID()) + ", OrderType: " + order.getOrderType() + ", isComplete: " + order.getIsComplete() +
+			"\t|  CustPrice: " + order.getCustPrice() + ", BusPrice: " + order.getBusPrice() + "\t|  PickedUp: " + pickedUp);
+		} else if (order instanceof DeliveryOrder && order.getOrderID() == orderNum) {
+			DeliveryOrder curOrder = (DeliveryOrder)order;
+			System.out.println("\nOrderID: " + order.getOrderID() + "\t|  DatePlaced: " + order.getDate() + "\t|   CustomerName: " + DBNinja.getCustomerName(order.getCustID()) + ", OrderType: " + order.getOrderType() + ", isComplete: " + order.getIsComplete() +
+			"\t|  CustPrice: " + order.getCustPrice() + ", BusPrice: " + order.getBusPrice() + "\t|  Delivered to: " + curOrder.getAddress());
+		}
+	}	
 	}
 
 	

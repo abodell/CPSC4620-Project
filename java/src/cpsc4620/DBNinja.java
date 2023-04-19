@@ -75,7 +75,7 @@ public final class DBNinja {
 			useOrderDiscount(o, disc);
 		}
 
-		String query = "INSERT INTO order VALUES(?, ?, ?, ?, ?, ?, ?)";
+		String query = "INSERT INTO `order` VALUES(?, ?, ?, ?, ?, ?, ?)";
 		try (PreparedStatement ps = conn.prepareStatement(query)) {
 			ps.setInt(1, o.getOrderID());
 			ps.setString(2, o.getOrderType());
@@ -348,7 +348,7 @@ public final class DBNinja {
 		 * for this, or maybe a completed time timestamp. However you have it.
 		 */
 		
-		String query = "UPDATE order SET OrderIsComplete = ? WHERE OrderID = ?";
+		String query = "UPDATE `order` SET OrderIsComplete = ? WHERE OrderID = ?";
 		try (PreparedStatement ps = conn.prepareStatement(query)) {
 			ps.setInt(1, 1);
 			ps.setInt(2, o.getOrderID());
@@ -474,7 +474,10 @@ public final class DBNinja {
 
 		ArrayList<Order> orders = new ArrayList<Order>();
 		ResultSet rs;
-		String query = "SELECT * FROM order ORDER BY OrderTime";
+		String query = "SELECT * FROM `order` ORDER BY OrderTime DESC";
+		String dineinQuery = "SELECT * FROM dineinorder WHERE DineInOrderOrderID = ?";
+		String pickupQuery = "SELECT * FROM pickuporder WHERE PickUpOrderOrderID = ?";
+		String deliveryQuery = "SELECT * FROM deliveryorder WHERE DeliveryOrderOrderID = ?";
 		try (PreparedStatement ps = conn.prepareStatement(query)) {
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -485,8 +488,46 @@ public final class DBNinja {
 				double price = rs.getDouble("OrderPrice");
 				double cost = rs.getDouble("OrderCost");
 				int complete = rs.getInt("OrderIsComplete");
-				Order newOrder = new Order(order_id, cust_id, type, date, price, cost, complete);
-				orders.add(newOrder);
+				if (type.equals("DINE-IN")) {
+					ResultSet rs1;
+					try (PreparedStatement ps1 = conn.prepareStatement(dineinQuery)) {
+						ps1.setInt(1, order_id);
+						rs1 = ps1.executeQuery();
+						while (rs1.next()) {
+							int table = rs1.getInt("DineInOrderTableNum");
+							DineinOrder newDineInOrder = new DineinOrder(order_id, cust_id, date, price, cost, complete, table);
+							orders.add(newDineInOrder);
+						}
+					} catch (SQLException ex) {
+						System.out.println(ex);
+					}
+				} else if (type.equals("PICK-UP")) {
+					ResultSet rs1;
+					try (PreparedStatement ps1 = conn.prepareStatement(pickupQuery)) {
+						ps1.setInt(1, order_id);
+						rs1 = ps1.executeQuery();
+						while (rs1.next()) {
+							int pickedUp = rs1.getInt("PickUpOrderPickedUp");
+							PickupOrder newPickupOrder = new PickupOrder(order_id, cust_id, date, price, cost, pickedUp, complete);
+							orders.add(newPickupOrder);
+						}
+					} catch (SQLException ex) {
+						System.out.println(ex);
+					}
+				} else {
+					ResultSet rs1;
+					try (PreparedStatement ps1 = conn.prepareStatement(deliveryQuery)) {
+						ps1.setInt(1, order_id);
+						rs1 = ps1.executeQuery();
+						while (rs1.next()) {
+							String address = rs1.getString("DeliveryOrderAddress");
+							DeliveryOrder newDeliveryOrder = new DeliveryOrder(order_id, cust_id, date, price, cost, complete, address);
+							orders.add(newDeliveryOrder);
+						}
+					} catch (SQLException ex) {
+						System.out.println(ex);
+					}
+				}
 			}
 		} catch (SQLException e) {
 			System.out.println(e);
