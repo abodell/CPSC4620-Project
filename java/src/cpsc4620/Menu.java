@@ -115,16 +115,13 @@ public class Menu {
 	}
 	
 	
-	public static void viewCustomers()
+	public static void viewCustomers() throws SQLException, IOException
 	{
 		/*
 		 * Simply print out all of the customers from the database. 
 		 */
 		
-		
-		
-		
-		
+		ArrayList<Customer> customers = DBNinja.getCustomerList();
 		
 	}
 	

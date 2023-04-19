@@ -664,9 +664,8 @@ public final class DBNinja {
 		 * return an arrayList of all the customers. These customers should
 		 *print in alphabetical order, so account for that as you see fit.
 		*/
-
 		ResultSet rs;
-		String query = "SELECT * FROM customer ORDER BY CustomerFName, CustomerLName";
+		String query = "SELECT * FROM customer ORDER BY CustomerLName, CustomerFName";
 		try (PreparedStatement ps = conn.prepareStatement(query)) {
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -680,8 +679,10 @@ public final class DBNinja {
 		} catch (SQLException e) {
 			System.out.println(e);
 		}
-
-		
+		System.out.println("\n");
+		for (Customer cust : custs) {
+			System.out.println("CustID: " + cust.getCustID() + "\t|  Name: " + cust.getFName() + " " + cust.getLName() + ",  Phone: " + cust.getPhone());
+		}
 		
 		//DO NOT FORGET TO CLOSE YOUR CONNECTION
 		conn.close();
