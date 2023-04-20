@@ -112,9 +112,9 @@ VALUES
 ((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Banana Peppers'), 0);
 
 -- THIRD ORDER
-INSERT INTO customer VALUES (0, 'Ellis', 'Beck', '864-254-5861');
+INSERT INTO customer VALUES (0, 'Ellis', 'Beck', '8642545861');
 
-INSERT INTO `order` VALUES (0, 'pickup', 19.8, 64.5, '2023-03-03 21:30:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-254-5861'), 1);
+INSERT INTO `order` VALUES (0, 'pickup', 19.8, 64.5, '2023-03-03 21:30:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '8642545861'), 1);
 INSERT INTO pickuporder VALUES ((SELECT MAX(OrderID) from `order`), 1);
 
 CALL MAKE_PIZZA('Original', 'Large', (SELECT MAX(OrderID) FROM `order`), 3.30, 10.75);
@@ -154,7 +154,7 @@ INSERT INTO pizzatoppingrelationship VALUES
 ((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Pepperoni'), 0);
 
 -- FOURTH ORDER
-INSERT INTO `order` VALUES (0, 'delivery', 16.86, 45.5, '2023-03-05 19:11:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-254-5861'), 1);
+INSERT INTO `order` VALUES (0, 'delivery', 16.86, 45.5, '2023-03-05 19:11:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '8642545861'), 1);
 INSERT INTO deliveryorder VALUES ((SELECT MAX(OrderID) from `order`), '115 Party Blvd, Anderson SC 29621', 1);
 
 CALL MAKE_PIZZA('Original', 'x-large', (SELECT MAX(OrderID) FROM `order`), 5.59, 14.50);
@@ -184,9 +184,9 @@ INSERT INTO pizzatoppingrelationship VALUES
 ((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Bacon'), 0);
 
 -- FIFTH ORDER
-INSERT INTO customer VALUES (0, 'Kurt', 'McKinney', '864-474-9953');
+INSERT INTO customer VALUES (0, 'Kurt', 'McKinney', '8644749953');
 
-INSERT INTO `order` VALUES (0, 'pickup', 7.85, 16.85, '2023-03-02 17:30:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-474-9953'), 1);
+INSERT INTO `order` VALUES (0, 'pickup', 7.85, 16.85, '2023-03-02 17:30:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '8644749953'), 1);
 INSERT INTO pickuporder VALUES ((SELECT MAX(OrderID) from `order`), 1);
 
 CALL MAKE_PIZZA('Gluten-Free', 'x-large', (SELECT MAX(OrderID) from `order`), 7.85, 16.85);
@@ -204,9 +204,9 @@ INSERT INTO pizzadiscount VALUES
 ((SELECT MAX(PizzaID) from pizza), (SELECT DiscountID from discount WHERE DiscountName = 'Specialty Pizza'));
 
 -- SIXTH ORDER
-INSERT INTO customer VALUES (0, 'Calvin', 'Sanders', '864-232-8944');
+INSERT INTO customer VALUES (0, 'Calvin', 'Sanders', '8642328944');
 
-INSERT INTO `order` VALUES (0, 'delivery', 3.20, 13.25, '2023-03-02 18:17:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-232-8944'), 1);
+INSERT INTO `order` VALUES (0, 'delivery', 3.20, 13.25, '2023-03-02 18:17:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '8642328944'), 1);
 INSERT INTO deliveryorder VALUES ((SELECT MAX(OrderID) from `order`), '6745 Wessex St Anderson SC 29621', 1);
 
 CALL MAKE_PIZZA('Thin', 'large', (SELECT MAX(OrderID) from `order`), 3.20, 13.25);
@@ -219,9 +219,9 @@ INSERT INTO pizzatoppingrelationship VALUES
 ((SELECT MAX(PizzaID) from pizza), (SELECT (ToppingID) FROM topping WHERE ToppingName LIKE 'Mushrooms'), 0);
 
 -- SEVENTH ORDER
-INSERT INTO customer VALUES (0, 'Lance', 'Benton', '864-878-5679');
+INSERT INTO customer VALUES (0, 'Lance', 'Benton', '8648785679');
 
-INSERT INTO `order` VALUES (0, 'delivery', 6.3, 24, '2023-03-06 20:32:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '864-878-5679'), 1);
+INSERT INTO `order` VALUES (0, 'delivery', 6.3, 24, '2023-03-06 20:32:00', (SELECT CustomerID from customer WHERE CustomerPhoneNumber LIKE '8648785679'), 1);
 INSERT INTO deliveryorder VALUES ((SELECT MAX(OrderID) from `order`), '879 Suburban Home, Anderson, SC 29621', 1);
 
 INSERT INTO orderdiscount VALUES

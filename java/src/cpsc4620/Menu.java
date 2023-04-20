@@ -224,12 +224,8 @@ public class Menu {
 	{
 		//print the inventory. I am really just concerned with the ID, the name, and the current inventory
 		
-		
-		
-		
-		
-		
-		
+		DBNinja.printInventory();
+
 	}
 
 	// Select an inventory item and add more to the inventory level to re-stock the
@@ -241,10 +237,18 @@ public class Menu {
 		 */
 		
 		
-		
-		
-		
-		
+		DBNinja.printInventory();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		System.out.println("Which topping do you want to add inventory to? Enter the number:");
+		int toppingID = Integer.parseInt(reader.readLine());
+		System.out.println("How many units would you like to add?");
+		int numUnits = Integer.parseInt(reader.readLine());
+		ArrayList<Topping> toppings = DBNinja.getInventory();
+		for (Topping topping : toppings) {
+			if (topping.getTopID() == toppingID) {
+				DBNinja.AddToInventory(topping, numUnits);
+			}
+		}
 	}
 
 	// A function that builds a pizza. Used in our add new order function
@@ -298,6 +302,19 @@ public class Menu {
 		 * 
 		 * You should ask the user which report to print
 		 */
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		System.out.println("Which report do you wish to print?  Enter the number:");
+		System.out.println("1.) ToppingPopularity");
+		System.out.println("2.) ProfitByPizza");
+		System.out.println("3.) ProfitByOrderType");
+		int reportChoice = Integer.parseInt(reader.readLine());
+		if (reportChoice == 1) {
+			DBNinja.printToppingPopReport();
+		} else if (reportChoice == 2) {
+			DBNinja.printProfitByPizzaReport();
+		} else if (reportChoice == 3) {
+			DBNinja.printProfitByOrderType();
+		}
 	}
 
 }

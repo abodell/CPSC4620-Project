@@ -406,14 +406,14 @@ public final class DBNinja {
 
 		 ResultSet rs;
 		 String query = "SELECT ToppingID, ToppingName, ToppingInventory FROM topping ORDER BY ToppingName";
-		 System.out.println("ID\tName\tInventory");
+		 System.out.printf("%5s %25s %5s\n", "ID", "Name", "Inventory");
 		 try (PreparedStatement ps = conn.prepareStatement(query)) {
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				int id = rs.getInt("ToppingID");
 				String name = rs.getString("ToppingName");
 				int inv = rs.getInt("ToppingInventory");
-				System.out.println(id + "\t" + name + "\t" + inv);
+				System.out.printf("%5d %25s %5d\n", id, name, inv);
 			}
 		 } catch (SQLException e) {
 			System.out.println(e);
@@ -488,7 +488,7 @@ public final class DBNinja {
 				double price = rs.getDouble("OrderPrice");
 				double cost = rs.getDouble("OrderCost");
 				int complete = rs.getInt("OrderIsComplete");
-				if (type.equals("DINE-IN")) {
+				if (type.equals("dinein")) {
 					ResultSet rs1;
 					try (PreparedStatement ps1 = conn.prepareStatement(dineinQuery)) {
 						ps1.setInt(1, order_id);
@@ -501,7 +501,7 @@ public final class DBNinja {
 					} catch (SQLException ex) {
 						System.out.println(ex);
 					}
-				} else if (type.equals("PICK-UP")) {
+				} else if (type.equals("pickup")) {
 					ResultSet rs1;
 					try (PreparedStatement ps1 = conn.prepareStatement(pickupQuery)) {
 						ps1.setInt(1, order_id);
@@ -761,14 +761,15 @@ public final class DBNinja {
 
 
 		ResultSet rs;
-		String query = "SELECT * FROM ProfitByOrderType ORDER BY Topping";
-		System.out.println("Topping Name\tCount");
+		String query = "SELECT * FROM ToppingPopularity ORDER BY Topping";
+		System.out.printf("\n%-25s %-7s\n", "Topping Name", "Count");
 		try (PreparedStatement ps = conn.prepareStatement(query)) {
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				String name = rs.getString("Topping");
 				double count = rs.getDouble("ToppingCount");
-				System.out.println(name + "\t" + count);
+				int realCount = (int)count;
+				System.out.printf("%-25s %-7d\n", name, realCount);
 			}
 		} catch (SQLException e) {
 			System.out.println(e);
@@ -792,7 +793,7 @@ public final class DBNinja {
 		
 		ResultSet rs;
 		String query = "SELECT * FROM ProfitByPizza ORDER BY Profit DESC";
-		System.out.println("PizzaCrust\tPizzaSize\tProfit\tLastOrderDate");
+		System.out.printf("\n%-20s %-15s %-10s %-20s\n", "PizzaCrust", "PizzaSize", "Profit", "LastOrderDate");
 		try (PreparedStatement ps = conn.prepareStatement(query)) {
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -800,7 +801,7 @@ public final class DBNinja {
 				String size = rs.getString("PizzaSize");
 				double profit = rs.getDouble("Profit");
 				String date = rs.getString("LastOrderDate");
-				System.out.println(crust + "\t" + size + "\t" + profit + "\t" + date);
+				System.out.printf("%-20s %-15s %-10.2f %-20s\n", crust, size, profit, date);
 			}
 		} catch (SQLException e) {
 			System.out.println(e);
@@ -826,7 +827,7 @@ public final class DBNinja {
 		
 		ResultSet rs;
 		String query = "SELECT * FROM ProfitByOrderType";
-		System.out.println("OrderType\tOrderMonth\tTotalOrderPrice\tTotalOrderCost\tProfit");
+		System.out.printf("\n%-15s %-15s %-15s %-15s %-15s\n", "OrderType", "OrderMonth", "TotalOrderPrice", "TotalOrderCost", "Profit");
 		try (PreparedStatement ps = conn.prepareStatement(query)) {
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -835,7 +836,7 @@ public final class DBNinja {
 				double price = rs.getDouble("TotalOrderPrice");
 				double cost = rs.getDouble("TotalOrderCost");
 				double profit = rs.getDouble("Profit");
-				System.out.println(type + "\t" + month + "\t" + price + "\t" + cost + "\t" + profit);
+				System.out.printf("%-15s %-15s %-15.2f %-15.2f %-15.2f\n", type, month, price, cost, profit);
 			}
 		} catch(SQLException e) {
 			System.out.println(e);
