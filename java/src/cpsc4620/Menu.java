@@ -141,7 +141,17 @@ public class Menu {
 		 * Once you get the name and phone number (and anything else your design might have) add it to the DB
 		 */
 		
-		
+		 BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+		 System.out.println("\nPlease Enter the Customer name (First Name <space> Last Name):");
+		 String name = reader.readLine();
+		 String[] x = name.split(" ", 2);
+
+		 System.out.println("What is this customer's phone number (##########) (No dash/space):");
+		 String phone = reader.readLine();
+
+		 Customer newCustomer = new Customer(0, x[0], x[1], phone);
+		 DBNinja.addCustomer(newCustomer);
 
 	}
 
