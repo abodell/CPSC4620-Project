@@ -406,14 +406,14 @@ public final class DBNinja {
 
 		 ResultSet rs;
 		 String query = "SELECT ToppingID, ToppingName, ToppingInventory FROM topping ORDER BY ToppingName";
-		 System.out.printf("%5s %25s %5s\n", "ID", "Name", "Inventory");
+		 System.out.printf("%-5s %-25s %-5s\n", "ID", "Name", "Inventory");
 		 try (PreparedStatement ps = conn.prepareStatement(query)) {
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				int id = rs.getInt("ToppingID");
 				String name = rs.getString("ToppingName");
 				int inv = rs.getInt("ToppingInventory");
-				System.out.printf("%5d %25s %5d\n", id, name, inv);
+				System.out.printf("%-5d %-25s %-5d\n", id, name, inv);
 			}
 		 } catch (SQLException e) {
 			System.out.println(e);
@@ -826,7 +826,7 @@ public final class DBNinja {
 		
 		
 		ResultSet rs;
-		String query = "SELECT * FROM ProfitByOrderType";
+		String query = "SELECT * FROM ProfitByOrderType GROUP BY OrderMonth, CustomerType ORDER BY Profit DESC";
 		System.out.printf("\n%-15s %-15s %-15s %-15s %-15s\n", "OrderType", "OrderMonth", "TotalOrderPrice", "TotalOrderCost", "Profit");
 		try (PreparedStatement ps = conn.prepareStatement(query)) {
 			rs = ps.executeQuery();
