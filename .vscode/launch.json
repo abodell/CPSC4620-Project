@@ -1,0 +1,49 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Menu",
+            "request": "launch",
+            "mainClass": "cpsc4620.Menu",
+            "projectName": "CPSC4620-Project_125eb411"
+        },
+        {
+            "type": "java",
+            "name": "MoreSort",
+            "request": "launch",
+            "mainClass": "init.MoreSort",
+            "projectName": "CPSC4620-Project_125eb411"
+        },
+        {
+            "type": "java",
+            "name": "ProcessSimulator",
+            "request": "launch",
+            "mainClass": "init.ProcessSimulator",
+            "projectName": "CPSC4620-Project_125eb411"
+        },
+        {
+            "type": "java",
+            "name": "SearchingAlgos",
+            "request": "launch",
+            "mainClass": "init.SearchingAlgos",
+            "projectName": "CPSC4620-Project_125eb411"
+        },
+        {
+            "type": "java",
+            "name": "SimpleRecursion",
+            "request": "launch",
+            "mainClass": "init.SimpleRecursion",
+            "projectName": "CPSC4620-Project_125eb411"
+        }
+    ]
+}

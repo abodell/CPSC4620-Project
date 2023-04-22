@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -109,8 +111,87 @@ public class Menu {
 		 * return to menu
 		 */
 		
+		 System.out.println("Is this order for an existing customer? Enter y/n");
+		 Customer newCustomer = null;
+		 String existing = reader.readLine();
+		 if (existing.equals("y")) {
+			System.out.println("Here's a list of current customers:");
+			ArrayList<Customer> customers = DBNinja.getCustomerList();
+			System.out.println("Which customer is this order for? Enter ID Number:");
+			int custID = Integer.parseInt(reader.readLine());
+			for (Customer customer : customers) {
+				if (customer.getCustID() == custID) {
+					newCustomer = customer;
+				}
+			}
+		 } else if (existing.equals("n")) {
+			EnterCustomer();
+			ArrayList<Customer> customers = DBNinja.getCustomerList();
+			System.out.println("New Customer has been added!");
+			newCustomer = customers.get(customers.size() - 1);
+		 }
 		
 		
+		System.out.println("Is this order for:");
+		System.out.println("1.) Dine-in");
+		System.out.println("2.) Pick-up");
+		System.out.println("3.) Delivery");
+		System.out.println("Enter the number of your choice:");
+		int orderType = Integer.parseInt(reader.readLine());
+
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
+		LocalDateTime now = LocalDateTime.now();
+
+		Order newOrder = null;
+
+		if (orderType == 1) {
+			System.out.println("What is your table number?");
+			int tableNum = Integer.parseInt(reader.readLine());
+			newOrder = new DineinOrder(0, newCustomer.getCustID(), dtf.format(now), 0, 0, 0, tableNum);
+		} else if (orderType == 2) {
+			newOrder = new PickupOrder(0, newCustomer.getCustID(), dtf.format(now), 0, 0, 0, 0);
+		} else if (orderType == 3) {
+			System.out.println("What is the address to deliver to?");
+			String address = reader.readLine();
+			newOrder = new DeliveryOrder(0, newCustomer.getCustID(), dtf.format(now), 0, 0, 0, address);
+		}
+		newOrder.addPizza(buildPizza(newOrder.getOrderID()));
+		
+		String morePizza = "y";
+		while (morePizza.equals("y")) {
+			System.out.println("Do you want to add more pizzas to this order? Enter y/n");
+			morePizza = reader.readLine();
+			if (morePizza.equals("y")) {
+				newOrder.addPizza(buildPizza(newOrder.getOrderID()));
+			}
+		}
+
+		System.out.println("Do you want to add discounts to this order?  Enter y/n");
+		String answer = reader.readLine();
+
+		ArrayList<Discount> discounts = DBNinja.getDiscountList();
+
+		if (answer.equals("y")) {
+			int showList = 1;
+			while (showList != -1) {
+				for (Discount discount : discounts) {
+					System.out.printf("\nDiscountID: %-4d  |  %-15s, Amount: %-5.2f, isPercent: %7b", discount.getDiscountID(), discount.getDiscountName(), discount.getAmount(), discount.isPercent());
+				}
+				System.out.println("\nWhich Discount do you want to add to the Order? Enter the DiscountID.  Enter -1 to stop adding Discounts:");
+				showList = Integer.parseInt(reader.readLine());
+				for (Discount discount : discounts) {
+					if (discount.getDiscountID() == showList) {
+						newOrder.addDiscount(discount);
+					}
+				}
+			}
+		}
+
+		DBNinja.addOrder(newOrder);
+		for (Pizza pizza : newOrder.getPizzaList()) {
+			DBNinja.addPizza(pizza);
+		}
+
 		System.out.println("Finished adding order...Returning to menu...");
 	}
 	
@@ -201,7 +282,7 @@ public class Menu {
 			PickupOrder curOrder = (PickupOrder)order;
 			boolean pickedUp = curOrder.getIsPickedUp() == 1;
 			System.out.println("\nOrderID: " + order.getOrderID() + "\t|  DatePlaced: " + order.getDate() + "\t|   CustomerName: " + DBNinja.getCustomerName(order.getCustID()) + ", OrderType: " + order.getOrderType() + ", isComplete: " + order.getIsComplete() +
-			"\t|  CustPrice: " + order.getCustPrice() + ", BusPrice: " + order.getBusPrice() + "\t|  PickedUp: " + pickedUp);
+			"\t|  CustPrice: " + order.getCustPrice() + ", BusPrice: " + order.getBusPrice() + "\t|  Has the order been picked up: " + pickedUp);
 		} else if (order instanceof DeliveryOrder && order.getOrderID() == orderNum) {
 			DeliveryOrder curOrder = (DeliveryOrder)order;
 			System.out.println("\nOrderID: " + order.getOrderID() + "\t|  DatePlaced: " + order.getDate() + "\t|   CustomerName: " + DBNinja.getCustomerName(order.getCustID()) + ", OrderType: " + order.getOrderType() + ", isComplete: " + order.getIsComplete() +
@@ -220,12 +301,26 @@ public class Menu {
 		 * and allow the user to choose which of the incomplete orders they wish to mark as complete
 		 * 
 		 */
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		
+		ArrayList<Order> orders = DBNinja.getCurrentOrders();
+
+		for (Order order : orders) {
+			if (order.getIsComplete() == 0) {
+				System.out.println("OrderID: " + order.getOrderID() + "\t|  DatePlaced: " + order.getDate() + "\t|   CustomerName: " + DBNinja.getCustomerName(order.getCustID()) + ", OrderType: " + order.getOrderType() + ", isComplete: " + order.getIsComplete());
+			}
+		}
+		System.out.println("Which order would you like to mark as complete?  Enter the orderID:");
+		int orderID = Integer.parseInt(reader.readLine());
 		
-		
-		
-		
-		
+		Order curOrder = null;
+		for (Order order : orders) {
+			if (order.getOrderID() == orderID) {
+				curOrder = order;
+			}
+		}
+
+		DBNinja.CompleteOrder(curOrder);
 
 	}
 
@@ -278,16 +373,101 @@ public class Menu {
 		 * 
 		 * Once the discounts are added, we can return the pizza
 		 */
+		System.out.println("Let's build a pizza!");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		Pizza ret = null;
+		System.out.println("What size is this pizza?");
+		System.out.println("1.) Small");
+		System.out.println("2.) Medium");
+		System.out.println("3.) Large");
+		System.out.println("4.) X-Large");
+		System.out.println("Enter the corresponding number:");
+		int size = Integer.parseInt(reader.readLine());
+
+		String pizzaSize = "";
+		if (size == 1) {
+			pizzaSize = "small";
+		} else if (size == 2) {
+			pizzaSize = "medium";
+		} else if (size == 3) {
+			pizzaSize = "Large";
+		} else if (size == 4) {
+			pizzaSize = "XLarge";
+		}
 		
+		System.out.println("What crust for this pizza?");
+		System.out.println("1.) Thin");
+		System.out.println("2.) Original");
+		System.out.println("3.) Pan");
+		System.out.println("4.) Gluten-Free");
+		System.out.println("Enter the corresponding number:");
+		int crust = Integer.parseInt(reader.readLine());
+
+		String pizzaCrust = "";
+		if (crust == 1) {
+			pizzaCrust = "Thin";
+		} else if (crust == 2) {
+			pizzaCrust = "Original";
+		} else if (crust == 3) {
+			pizzaCrust = "Pan";
+		} else if (crust == 4) {
+			pizzaCrust = "Gluten-Free";
+		} 
+
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
+		LocalDateTime now = LocalDateTime.now();
+
+		double price = DBNinja.getBaseCustPrice(pizzaSize, pizzaCrust);
+		double cost = DBNinja.getBaseBusPrice(pizzaSize, pizzaCrust);
+
+		Pizza newPizza = new Pizza(0, pizzaSize, pizzaCrust, orderID, "0", dtf.format(now), price, cost);
+
+		DBNinja.printInventory();
+		ArrayList<Topping> inventory = DBNinja.getInventory();
+
+		System.out.println("Which topping do you want to add?  Enter the TopID.  Enter -1 to stop adding toppings");
+		int topID = Integer.parseInt(reader.readLine());
+		while (topID != -1) {
+			int index = 0;
+			for (Topping topping : inventory) {
+				if (topping.getTopID() == topID) {
+					System.out.println("Do you want to add extra topping.  Enter y/n");
+					if (reader.readLine().equals("y")) {
+						newPizza.addToppings(topping, true);
+						newPizza.modifyDoubledArray(index, true);
+						
+					} else {
+						newPizza.addToppings(topping, false);
+					}
+				}
+				index++;
+			}
+			DBNinja.printInventory();
+			System.out.println("Which topping do you want to add?  Enter the TopID.  Enter -1 to stop adding toppings");
+			topID = Integer.parseInt(reader.readLine());
+		}
+
 		
-		
-		
-		
-		
-		
-		return ret;
+		System.out.println("Do you want to add discounts to this Pizza?  Enter y/n");
+		String answer = reader.readLine();
+
+		ArrayList<Discount> discounts = DBNinja.getDiscountList();
+
+		if (answer.equals("y")) {
+			int showList = 1;
+			while (showList != -1) {
+				for (Discount discount : discounts) {
+					System.out.printf("\nDiscountID: %-4d  |  %-15s, Amount: %-5.2f, isPercent: %7b", discount.getDiscountID(), discount.getDiscountName(), discount.getAmount(), discount.isPercent());
+				}
+				System.out.println("\nWhich Discount do you want to add to the Pizza? Enter the DiscountID.  Enter -1 to stop adding Discounts:");
+				showList = Integer.parseInt(reader.readLine());
+				for (Discount discount : discounts) {
+					if (discount.getDiscountID() == showList) {
+						newPizza.addDiscounts(discount);
+					}
+				}
+			}
+		}
+		return newPizza;
 	}
 	
 	private static int getTopIndexFromList(int TopID, ArrayList<Topping> tops)
